@@ -11,7 +11,7 @@ app = FastAPI()
 
 
 app.include_router(cityPath)
-@app.get('/', status_code=status.HTTP_200_OK)
+@app.get('/get', status_code=status.HTTP_200_OK)
 async def hello():
     return "Hello server is workingsssss"
 
