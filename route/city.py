@@ -4,6 +4,7 @@ from model.city import City
 from pydantic import BaseModel
 from datetime import datetime, timezone, timedelta
 from fastapi.responses import JSONResponse
+import random
 cityPath = APIRouter()
 # Time zone in Thailand UTC+7
 tz = timezone(timedelta(hours = 7))
@@ -16,7 +17,7 @@ class CityModel(BaseModel):
     CountryCode: str | None = None
     District:  str | None = None
     Population:  int | None = None
-    
+    count:  int | None = None
 
 
 
@@ -41,13 +42,17 @@ async def creatcity(reqBody:CityModel,database:db_dependency):
     return {"city":insert,"time":date.strftime("%d %m %Y")}
 
 @cityPath.post("/city/genarate",status_code=status.HTTP_200_OK)
-async def creatcity(countGenerate:int,database:db_dependency):
-    
+async def creatcity(reqBody:CityModel,database:db_dependency):
+    list_gen = [] 
+    for i in range(reqBody.count):
+        insert = City(Names="a"+str(random.randrange(1,100)),CountryCodes="WERQ"+str(random.randrange(1,100)),Districts="city",Populations=random.randrange(1000,100000))
+        list_gen.append(insert)
+        print(list_gen)
     # database.add(insert)
-    database.commit()
+    # database.commit(list_gen)
     # if city is None:
     #     raise HTTPException(status_code=404,detail='City not found')
-    return {"city":"a","time":date.strftime("%d %m %Y")}
+    return {"city":list_gen,"time":date.strftime("%d %m %Y")}
 
 
 @cityPath.get("/city/",status_code=status.HTTP_200_OK)
@@ -66,7 +71,7 @@ async def UpdateCity(city_id:int,reqBody:CityModel,database:db_dependency):
     database.close()
     if city is None:
         raise HTTPException(status_code=404,detail='City not found')
-    return "finished update"
+    return {"city":"finished update"}
 
 
 
